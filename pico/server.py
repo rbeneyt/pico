@@ -2,8 +2,16 @@ import logging
 import sys
 import socket
 
+WERKZEUG_SHDM_CHANGE_RELEASE = '0.16.0'
+
+import werkzeug
+
+if werkzeug.__version__ < WERKZEUG_SHDM_CHANGE_RELEASE:
+    from werkzeug.wsgi import SharedDataMiddleware
+else:
+    from werkzeug.middleware.shared_data import SharedDataMiddleware
+
 from werkzeug.serving import run_simple
-from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.utils import import_string
 
 DEF_SERVER_IP   = '127.0.0.1'
