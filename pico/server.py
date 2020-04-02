@@ -6,13 +6,13 @@ from werkzeug.serving import run_simple
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.utils import import_string
 
-DEF_SERVER_IP   = '127.0.0.1'
-DEF_SERVER_PORT = 4242
+SERVER_IP   = '127.0.0.1'
+SERVER_PORT = 4242
 
 logging.basicConfig(level=logging.INFO)
 
 
-def run_app(app, ip=DEF_SERVER_IP, port=DEF_SERVER_PORT, use_debugger=True, use_reloader=True, threaded=True):
+def run_app(app, ip=SERVER_IP, port=SERVER_PORT, use_debugger=True, use_reloader=True, threaded=True):
     app = SharedDataMiddleware(app, {
         '/': 'static'
     })
@@ -36,25 +36,20 @@ if __name__ == '__main__':
     if len(sys.argv) > 2:
         server_ip = sys.argv[2]
     else:
-        server_ip = DEF_SERVER_IP
+        server_ip = SERVER_IP
 
     if ':' in server_ip:
         server_ip, server_port = server_ip.split(':')
 
         # For now, werkzeug defaults to localhost if ip == '', but may change.
         if not server_ip:
-            server_ip = DEF_SERVER_IP
+            server_ip = SERVER_IP
 
         try:
             server_port = int(server_port)
         except ValueError:
-            try:
-                server_port = socket.getservbyname(server_port, 'tcp')
-
-            # OSError in python3, but error in python2.7.
-            except Exception:
-                server_port = DEF_SERVER_PORT
+            raise TypeError('Invalid port number specified.')
     else:
-        server_port = DEF_SERVER_PORT
+        server_port = SERVER_PORT
 
     run_app(app, server_ip, server_port)
